@@ -1,25 +1,42 @@
-from typing import Union
-
 from fastapi import FastAPI
 
-from controllers import users_controller
+from sqlmodel import Field, Session, SQLModel, create_engine, select
 
-from schemas.user import user
+from database import engine, create_db_and_tables
+
+from models import Hero, Users
+
+from controllers import get_users, post_user
 
 app = FastAPI()
 
-@app.get("/")
-def root():
-    return {"Saiba mais": "Acesse http://localhost:8000/docs para saber mais"}
+
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
+
+
+@app.post("/heroes/")
+def create_hero(hero: Hero):
+    with Session(engine) as session:
+        session.add(hero)
+        session.commit()
+        session.refresh(hero)
+        return hero
+
+
+@app.get("/heroes/")
+def read_heroes():
+    with Session(engine) as session:
+        heroes = session.exec(select(Hero)).all()
+        return heroes
+
 
 @app.get("/users")
-def users():
-    return users_controller.get_user()
+def read_users():
+    return get_users()
 
-@app.get("/users/{user_id}")
-def user_by_id(user_id: int):
-    return users_controller.get_user_by_id(user_id)
 
 @app.post("/users")
-def new_user(user: user):
-    return users_controller.post_user(user)
+def create_user(user: Users):
+    return post_user(user)
