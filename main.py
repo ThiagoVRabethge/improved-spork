@@ -4,9 +4,9 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 from database import engine, create_db_and_tables
 
-from models import Hero, Users
+from models import Users
 
-from controllers import get_users, post_user
+from controllers import get_users, get_user_by_id, post_user
 
 app = FastAPI()
 
@@ -16,25 +16,14 @@ def on_startup():
     create_db_and_tables()
 
 
-@app.post("/heroes/")
-def create_hero(hero: Hero):
-    with Session(engine) as session:
-        session.add(hero)
-        session.commit()
-        session.refresh(hero)
-        return hero
-
-
-@app.get("/heroes/")
-def read_heroes():
-    with Session(engine) as session:
-        heroes = session.exec(select(Hero)).all()
-        return heroes
-
-
 @app.get("/users")
 def read_users():
     return get_users()
+
+
+@app.get("/users/{id}")
+def user_by_id(id):
+    return get_user_by_id(id)
 
 
 @app.post("/users")
