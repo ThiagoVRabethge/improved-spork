@@ -18,6 +18,7 @@ origins = [
     "https://localhost.tiangolo.com",
     "http://localhost",
     "http://localhost:8080",
+    "http://localhost:3000",
 ]
 
 app.add_middleware(
@@ -36,7 +37,7 @@ def on_startup():
 
 @app.get("/")
 def read_docs():
-    return {"documentation": "http://localhost:8000/docs"}
+    return {"Documentation": "Visit the /docs endpoint to see"}
 
 
 @app.get("/users")
