@@ -1,25 +1,25 @@
 # Getting started
 
-pre-requisites:
+## Pre-requisites:
 
-- python installed
+- Python installed
 
-- a git clone of this repository
+- A git clone of this repository
 
-installing fastapi, our api routes framework:
+## Installing project dependendencies:
 
-```py -m pip install fastapi```
+```py -m pip install -r requirements.txt```
 
-installing sqlmodel, our ORM:
+This command gonna install: 
 
-```py -m pip install sqlmodel```
+- FastApi, a web framework for building APIs
 
-installing uvicorn, our python server:
+- SQLModel, a library for interacting with SQL databases from Python code
 
-```py -m pip install uvicorn```
+- Uvicorn, a ASGI web server implementation for Python
 
-finnaly, running the project:
+## Running the project:
 
 ```py -m uvicorn main:app --reload```
 
-a database with a users table and a api with a get, get by id and post routes will be created
+A SQLite database with a users and users habits with get and post enpoints for them gonna be created
