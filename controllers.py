@@ -8,6 +8,8 @@ from passlib.context import CryptContext
 
 import re
 
+from fastapi import FastAPI, HTTPException
+
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -33,7 +35,7 @@ def post_user(user: Users):
     # .{8,} enforces a minimum length of 8 characters.
 
     if not re.match(r'^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$', user.password):
-        return {"error": "invalid password"}
+        raise HTTPException(status_code=404, detail="Password too weak")
     
     user.password = pwd_context.hash(user.password) 
     
