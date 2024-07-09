@@ -4,6 +4,13 @@ from database import engine, create_db_and_tables
 
 from models import Users, Users_Habits
 
+from passlib.context import CryptContext
+
+import re
+
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 def get_users():
     with Session(engine) as session:
@@ -20,6 +27,16 @@ def get_user_by_id(id: int):
 
 
 def post_user(user: Users):
+    #  (?=.*[A-Z]) ensures there’s at least one uppercase letter.
+    # (?=.*[0-9]) requires at least one digit.
+    # (?=.*[^a-zA-Z0-9]) checks for at least one special character.
+    # .{8,} enforces a minimum length of 8 characters.
+
+    if not re.match(r'^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$', user.password):
+        return {"error": "invalid password"}
+    
+    user.password = pwd_context.hash(user.password) 
+    
     with Session(engine) as session:
         session.add(user)
         session.commit()
