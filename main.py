@@ -10,6 +10,8 @@ from controllers import post_user, login
 
 from fastapi.middleware.cors import CORSMiddleware
 
+import timeout_decorator
+
 app = FastAPI()
 
 
@@ -31,6 +33,7 @@ app.add_middleware(
 )
 
 
+@timeout_decorator.timeout(5)
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
