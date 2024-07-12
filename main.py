@@ -4,9 +4,9 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 from database import engine, create_db_and_tables
 
-from models import Users, Users_Habits
+from models import Users, Users_Habits, Apps
 
-from controllers import post_user, login
+from controllers import post_user, login, post_app, get_user_apps
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -52,3 +52,13 @@ def sign_in(user: Users):
 @app.post("/users")
 def create_user(user: Users):
     return post_user(user)
+
+
+@app.get("/users/{user_id}/apps")
+def read_user_apps(user_id: int):
+    return get_user_apps(user_id)
+
+
+@app.post("/apps")
+def add_app(app: Apps):
+    return post_app(app)

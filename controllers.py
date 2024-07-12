@@ -2,7 +2,7 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 from database import engine, create_db_and_tables
 
-from models import Users, Users_Habits
+from models import Users, Users_Habits, Apps
 
 from passlib.context import CryptContext
 
@@ -15,8 +15,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def login(user: Users):
-    # user.password = pwd_context.hash(user.password)
-
     with Session(engine) as session:
         statement = select(Users).where(Users.username == user.username)
         results = session.exec(statement)
@@ -28,11 +26,6 @@ def login(user: Users):
 
 
 def post_user(user: Users):
-    #  (?=.*[A-Z]) ensures there’s at least one uppercase letter.
-    # (?=.*[0-9]) requires at least one digit.
-    # (?=.*[^a-zA-Z0-9]) checks for at least one special character.
-    # .{8,} enforces a minimum length of 8 characters.
-
     if not re.match(r"^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$", user.password):
         raise HTTPException(status_code=400, detail="Password too weak")
 
@@ -45,14 +38,16 @@ def post_user(user: Users):
         return user
 
 
-# def get_users():
-#     with Session(engine) as session:
-#         users = session.exec(select(Users)).all()
-#         return users
+def get_user_apps(user_id: int):
+    with Session(engine) as session:
+        statement = select(Apps).where(Apps.user_id == user_id)
+        results = session.exec(statement)
+        return results.all()
 
 
-# def get_users_habits(user_id: int):
-#         with Session(engine) as session:
-#             statement = select(Users_Habits).where(Users_Habits.user_id == user_id)
-#             results = session.exec(statement)
-#             return results.all()
+def post_app(app: Apps):
+    with Session(engine) as session:
+        session.add(app)
+        session.commit()
+        session.refresh(app)
+        return app

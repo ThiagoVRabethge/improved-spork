@@ -13,3 +13,11 @@ class Users_Habits(SQLModel, table=True):
     date: str
     checked: bool
     name: str
+
+
+class Apps(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    name: str
+    description: str
+    link: str
+    user_id: int
