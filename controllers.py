@@ -24,7 +24,7 @@ def login(user: Users):
             if not pwd_context.verify(user.password, db_user.password):
                 raise HTTPException(status_code=400, detail="Wrong password")
             else:
-                return db_user.username
+                return {"id": db_user.id, "username": db_user.username}
 
 
 def post_user(user: Users):
