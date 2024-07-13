@@ -4,17 +4,17 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 from database import engine, create_db_and_tables
 
-from models import Users, Users_Habits
-
-from controllers import post_user, login, get_user_apps
-
 from fastapi.middleware.cors import CORSMiddleware
 
 import timeout_decorator
 
-from classes.apps_model import Apps
+from models.apps_model import Apps
 
-from functions.apps_controller import post_app
+from controllers.apps_controller import post_app
+
+from models.users_model import Users
+
+from controllers.users_controller import post_user, login, get_user_apps
 
 app = FastAPI()
 
