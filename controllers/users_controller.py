@@ -2,15 +2,15 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 from database import engine, create_db_and_tables
 
-from models import Users, Users_Habits
-
 from passlib.context import CryptContext
 
 import re
 
 from fastapi import FastAPI, HTTPException
 
-from classes.apps_model import Apps
+from models.apps_model import Apps
+
+from models.users_model import Users
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -45,11 +45,3 @@ def get_user_apps(user_id: int):
         statement = select(Apps).where(Apps.user_id == user_id)
         results = session.exec(statement)
         return results.all()
-
-
-# def post_app(app: Apps):
-#     with Session(engine) as session:
-#         session.add(app)
-#         session.commit()
-#         session.refresh(app)
-#         return app
