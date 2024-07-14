@@ -1,25 +1,29 @@
-# Getting started
+# Overview
 
-## Pre-requisites:
+This is the API for the Community Store application, the app store for open source PWAs.
+
+Running this project locally creates a SQLite database with users and apps tables, this MVC API provides get and post routes for them, you can also access root endpoint to view all documentation 
+
+# Getting Started
+
+### Requirements:
 
 - Python installed
 
 - A git clone of this repository
 
-## Installing project dependendencies:
+### Install the project dependencies:
 
 ```py -m pip install -r requirements.txt```
 
-This command gonna install: 
+This command will install: 
 
 - FastApi, a web framework for building APIs
 
 - SQLModel, a library for interacting with SQL databases from Python code
 
-- Uvicorn, a ASGI web server implementation for Python
+- Uvicorn, an ASGI web server implementation for Python
 
-## Running the project:
+### Running the project:
 
 ```py -m uvicorn main:app --reload```
-
-A SQLite database with a users and users habits with get and post enpoints for them gonna be created
