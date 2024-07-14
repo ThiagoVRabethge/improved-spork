@@ -10,7 +10,7 @@ import timeout_decorator
 
 from models.apps_model import Apps
 
-from controllers.apps_controller import post_app
+from controllers.apps_controller import post_app, delete_app
 
 from models.users_model import Users
 
@@ -48,6 +48,7 @@ def read_docs():
     return {"Documentation": "Visit the /docs endpoint to see"}
 
 
+@timeout_decorator.timeout(1)
 @app.post("/login")
 def sign_in(user: Users):
     return login(user)
@@ -66,3 +67,8 @@ def read_user_apps(user_id: int):
 @app.post("/apps")
 def add_app(app: Apps):
     return post_app(app)
+
+
+@app.delete("/apps/{app_id}")
+def exclude_app(app_id: int):
+    return delete_app(app_id)
