@@ -11,3 +11,20 @@ def post_app(app: Apps):
         session.commit()
         session.refresh(app)
         return app
+
+
+def delete_app(app_id: int):
+    with Session(engine) as session:
+        statement = select(Apps).where(Apps.id == app_id)
+        results = session.exec(statement)
+        app = results.one()
+
+        session.delete(app)
+        session.commit()
+
+        statement = select(Apps).where(Apps.id == app_id)
+        results = session.exec(statement)
+        app = results.first()
+
+        if app is None:
+            return "successfully deleted"
