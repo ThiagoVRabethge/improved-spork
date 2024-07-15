@@ -6,8 +6,6 @@ from database import engine, create_db_and_tables
 
 from fastapi.middleware.cors import CORSMiddleware
 
-import timeout_decorator
-
 from models.apps_model import Apps
 
 from controllers.apps_controller import post_app, delete_app
@@ -37,7 +35,6 @@ app.add_middleware(
 )
 
 
-@timeout_decorator.timeout(5)
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
@@ -48,7 +45,6 @@ def read_docs():
     return {"Documentation": "Visit the /docs endpoint to see"}
 
 
-@timeout_decorator.timeout(1)
 @app.post("/login")
 def sign_in(user: Users):
     return login(user)
