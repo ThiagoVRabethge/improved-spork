@@ -12,6 +12,18 @@ Running this project locally creates a SQLite database with users and apps table
 
 - A git clone of this repository
 
+### Environment Variables:
+
+Add an .env file to your project root. It should contain the following environment variables:
+
+- DATABASE_NAME
+
+- LOCALHOST
+
+- PRODUCTION_URL
+
+For examples, see the .env_example file
+
 ### Install the project dependencies:
 
 ```py -m pip install -r requirements.txt```
