@@ -1,6 +1,12 @@
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
-sqlite_file_name = "database.db"
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+sqlite_file_name = os.environ.get("DATABASE_NAME")
 
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 

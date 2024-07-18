@@ -14,17 +14,17 @@ from models.users_model import Users
 
 from controllers.users_controller import post_user, login, get_user_apps
 
+import os
+
+from dotenv import load_dotenv
+
 app = FastAPI()
 
 
-origins = [
-    "http://localhost.tiangolo.com",
-    "https://localhost.tiangolo.com",
-    "http://localhost",
-    "http://localhost:8080",
-    "http://localhost:3000",
-    "https://potential-funicular.onrender.com",
-]
+load_dotenv()
+
+
+origins = [os.environ.get("LOCALHOST"), os.environ.get("PRODUCTION_URL")]
 
 app.add_middleware(
     CORSMiddleware,
