@@ -7,6 +7,13 @@ from models.apps_model import Apps
 from fastapi import FastAPI, HTTPException
 
 
+def get_apps():
+    with Session(engine) as session:
+        statement = select(Apps)
+        results = session.exec(statement)
+        return results.all()
+
+
 def post_app(app: Apps):
     with Session(engine) as session:
         session.add(app)
