@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from models.apps_model import Apps
 
-from controllers.apps_controller import post_app, delete_app, put_app
+from controllers.apps_controller import get_apps, post_app, delete_app, put_app
 
 from models.users_model import Users
 
@@ -58,6 +58,11 @@ def create_user(user: Users):
 @app.get("/users/{user_id}/apps")
 def read_user_apps(user_id: int):
     return get_user_apps(user_id)
+
+
+@app.get("/apps")
+def read_all_apps():
+    return get_apps()
 
 
 @app.post("/apps")
