@@ -1,27 +1,11 @@
-FROM python:3-alpine AS builder
- 
+FROM bitnami/python:3.11.1
 WORKDIR /app
- 
-RUN python3 -m venv venv
-ENV VIRTUAL_ENV=/app/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-COPY ./improved-spork.db
- 
-COPY ./requirements.txt .
-RUN pip install -r requirements.txt
- 
-# Stage 2
-FROM python:3-alpine AS runner
- 
-WORKDIR /app
- 
-COPY --from=builder /app/venv venv
-COPY main.py main.py
- 
-ENV VIRTUAL_ENV=/app/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
- 
+COPY . /app
+
+ADD ./improved-spork.db /app/improved-spork.db
+
+RUN pip install --no-cache-dir -r requirements.txt
+
 EXPOSE 8000
- 
-CMD [ "uvicorn", "--host", "0.0.0.0", "main:app" ]
+CMD python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
