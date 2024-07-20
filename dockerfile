@@ -18,7 +18,7 @@ WORKDIR /app
 COPY --from=builder /app/venv venv
 COPY main.py main.py
 
-# COPY improved-spork.db improved-spork.db
+COPY improved-spork.db .
 
 ENV VIRTUAL_ENV=/app/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
