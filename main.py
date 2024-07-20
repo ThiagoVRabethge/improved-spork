@@ -78,3 +78,8 @@ def update_app(app_id: int, app: Apps):
 @app.delete("/apps/{app_id}")
 def exclude_app(app_id: int):
     return delete_app(app_id)
+
+
+@app.get("test_endpoint")
+def test_endpoint():
+    return {"test": "new endpoint"}
