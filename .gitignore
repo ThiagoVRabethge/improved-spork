@@ -1,5 +1,5 @@
 /.env
-/improved-spork.db
+# /improved-spork.db
 # /__pycache__
 # /controllers/__pycache__
 # /models/__pycache__
