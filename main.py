@@ -80,6 +80,6 @@ def exclude_app(app_id: int):
     return delete_app(app_id)
 
 
-@app.get("/test_endpoint")
+@app.get("/test")
 def test_endpoint():
-    return {"test": "new endpoint"}
+    return "test"
