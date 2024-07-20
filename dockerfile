@@ -1,17 +1,25 @@
-# Use the official Python image as the base
-FROM python:3.9
-
-# Set the working directory inside the container
+FROM python:3-alpine AS builder
+ 
 WORKDIR /app
-
-# Copy the FastAPI app files into the container
-COPY . /app
-
-# Install dependencies
+ 
+RUN python3 -m venv venv
+ENV VIRTUAL_ENV=/app/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ 
+COPY requirements.txt .
 RUN pip install -r requirements.txt
-
-# Expose the port on which the FastAPI app will run
+ 
+# Stage 2
+FROM python:3-alpine AS runner
+ 
+WORKDIR /app
+ 
+COPY --from=builder /app/venv venv
+COPY main.py main.py
+ 
+ENV VIRTUAL_ENV=/app/venv
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+ 
 EXPOSE 8000
-
-# Start the FastAPI app
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+ 
+CMD [ "uvicorn", "--host", "0.0.0.0", "main:app" ]
