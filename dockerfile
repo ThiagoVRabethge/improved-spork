@@ -1,28 +1,17 @@
-# Stage 1 - Builder
-FROM python:3-alpine AS builder
+# Use the official Python image as the base
+FROM python:3.9
 
+# Set the working directory inside the container
 WORKDIR /app
 
-RUN python3 -m venv venv
-ENV VIRTUAL_ENV=/app/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
+# Copy the FastAPI app files into the container
+COPY . /app
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Stage 2 - Runner
-FROM python:3-alpine AS runner
-
-WORKDIR /app
-
-COPY --from=builder /app/venv venv
-COPY main.py main.py
-
-COPY improved-spork.db .
-
-ENV VIRTUAL_ENV=/app/venv
-ENV PATH="$VIRTUAL_ENV/bin:$PATH"
-
+# Expose the port on which the FastAPI app will run
 EXPOSE 8000
 
-CMD [ "uvicorn", "--host", "0.0.0.0", "main:app" ]
+# Start the FastAPI app
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
