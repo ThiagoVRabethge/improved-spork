@@ -3,7 +3,7 @@ WORKDIR /app
 
 COPY . /app
 
-COPY /app/improved-spork.db /app/improved-spork.db
+COPY ./improved-spork.db /app/improved-spork.db
 
 RUN pip install --no-cache-dir -r requirements.txt
 
