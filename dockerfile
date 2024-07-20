@@ -19,7 +19,7 @@ COPY --from=builder /app/venv venv
 COPY main.py main.py
 
 # Adicione a linha abaixo para copiar o banco de dados, se ele existir
-COPY sqlite.db /app/improved-spork.db
+# COPY sqlite.db /app/improved-spork.db
 
 ENV VIRTUAL_ENV=/app/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
