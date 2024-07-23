@@ -1,6 +1,6 @@
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
-from database import engine, create_db_and_tables
+from database.postgres import engine, create_db_and_tables
 
 from models.apps_model import Apps
 
@@ -10,6 +10,13 @@ from fastapi import FastAPI, HTTPException
 def get_apps():
     with Session(engine) as session:
         statement = select(Apps)
+        results = session.exec(statement)
+        return results.all()
+
+
+def get_apps_by_user(user_id: int):
+    with Session(engine) as session:
+        statement = select(Apps).where(Apps.user_id == user_id)
         results = session.exec(statement)
         return results.all()
 
