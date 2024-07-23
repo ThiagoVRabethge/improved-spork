@@ -2,7 +2,7 @@
 
 This is the API for the Community Store application, the app store for open source PWAs.
 
-Running this project locally creates a SQLite database with users and apps tables, this MVC API provides get and post routes for them, you can also access root endpoint to view all documentation 
+Running this project locally creates a Postgres database with users and apps tables, this MVC API provides get and post routes for them, you can also access root endpoint to view all documentation 
 
 # Getting Started
 
@@ -16,7 +16,7 @@ Running this project locally creates a SQLite database with users and apps table
 
 Add an .env file to your project root. It should contain the following environment variables:
 
-- DATABASE_NAME
+- PG_URL
 
 - LOCALHOST
 
