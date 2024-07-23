@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-pg_url = f"{os.environ.get("PG_URL")}"
+pg_url = os.environ.get("PG_URL")
 engine = create_engine(pg_url, echo=True)
 
 
