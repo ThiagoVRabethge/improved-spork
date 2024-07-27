@@ -14,6 +14,7 @@ from controllers.apps_controller import (
     delete_app,
 )
 from models.apps_model import Apps
+import timeout_decorator
 
 load_dotenv()
 
@@ -47,6 +48,7 @@ def docs():
 # auth routes
 
 
+@timeout_decorator.timeout(1)
 @app.post("/sign_in")
 def sign_in(user: User):
     return login(user)
