@@ -32,9 +32,9 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
-def on_startup():
-    create_db_and_tables()
+# @app.on_event("startup")
+# def on_startup():
+#     create_db_and_tables()
 
 
 # docs route
@@ -85,3 +85,9 @@ def update_app(app_id: int, app: Apps):
 @app.delete("/apps/{app_id}")
 def exclude_app(app_id: int):
     return delete_app(app_id)
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("main.py")
