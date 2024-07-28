@@ -88,6 +88,4 @@ def exclude_app(app_id: int):
 
 
 if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run("main.py")
+    app.run("main.py")
