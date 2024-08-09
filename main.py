@@ -15,6 +15,8 @@ from controllers.apps_controller import (
 )
 from models.apps_model import Apps
 import timeout_decorator
+from models.apps_ratings import Apps_Ratings
+from controllers.apps_ratings_controller import post_apps_ratings
 
 load_dotenv()
 
@@ -32,9 +34,9 @@ app.add_middleware(
 )
 
 
-# @app.on_event("startup")
-# def on_startup():
-#     create_db_and_tables()
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()
 
 
 # docs route
@@ -87,5 +89,6 @@ def exclude_app(app_id: int):
     return delete_app(app_id)
 
 
-if __name__ == "__main__":
-    app.run("main.py")
+@app.post("/apps_ratings")
+def app_ratings(apps_ratings: Apps_Ratings):
+    return post_apps_ratings(apps_ratings)
