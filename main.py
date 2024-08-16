@@ -16,7 +16,10 @@ from controllers.apps_controller import (
 from models.apps_model import Apps
 import timeout_decorator
 from models.apps_ratings import Apps_Ratings
-from controllers.apps_ratings_controller import post_apps_ratings
+from controllers.apps_ratings_controller import (
+    post_apps_ratings,
+    handle_get_app_ratings,
+)
 
 load_dotenv()
 
@@ -87,6 +90,11 @@ def update_app(app_id: int, app: Apps):
 @app.delete("/apps/{app_id}")
 def exclude_app(app_id: int):
     return delete_app(app_id)
+
+
+@app.get("/apps_ratings/{app_id}")
+def get_app_ratings(app_id: int):
+    return handle_get_app_ratings(app_id)
 
 
 @app.post("/apps_ratings")
