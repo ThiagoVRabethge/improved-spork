@@ -4,6 +4,13 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 from database.postgres import create_db_and_tables, engine
 import re
 from passlib.hash import pbkdf2_sha256
+from pydantic import BaseModel
+
+
+class Put_User_BaseModel(BaseModel):
+    user_id: int
+    icon: str
+    about_me: str
 
 
 def login(user: User):
@@ -28,3 +35,20 @@ def post_user(user: User):
         session.commit()
         session.refresh(user)
         return user
+
+
+def handle_put_user(user: Put_User_BaseModel):
+    with Session(engine) as session:
+        statement = select(User).where(User.id == user.user_id)
+        results = session.exec(statement)
+        db_user = results.one()
+
+        db_user.icon = user.icon
+        db_user.about_me = user.about_me
+
+        session.add(db_user)
+        session.commit()
+        session.refresh(db_user)
+
+        return db_user
+    
