@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from database.postgres import create_db_and_tables, engine
 from models.user_model import User
-from controllers.users_controller import login, post_user
+from controllers.users_controller import login, post_user, handle_put_user
 import os
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,6 +20,7 @@ from controllers.apps_ratings_controller import (
     post_apps_ratings,
     handle_get_app_ratings,
 )
+from pydantic import BaseModel
 
 load_dotenv()
 
@@ -62,6 +63,17 @@ def sign_in(user: User):
 @app.post("/sign_up")
 def sign_up(user: User):
     return post_user(user)
+
+
+class Put_User_BaseModel(BaseModel):
+    user_id: int
+    icon: str
+    about_me: str
+
+
+@app.put("/users")
+def put_user(user: Put_User_BaseModel):
+    return handle_put_user(user)
 
 
 # apps routes
