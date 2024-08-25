@@ -2,7 +2,12 @@ from fastapi import FastAPI
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from database.postgres import create_db_and_tables, engine
 from models.user_model import User
-from controllers.users_controller import login, post_user, handle_put_user
+from controllers.users_controller import (
+    login,
+    post_user,
+    handle_get_user_profile,
+    handle_put_user,
+)
 import os
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
@@ -63,6 +68,11 @@ def sign_in(user: User):
 @app.post("/sign_up")
 def sign_up(user: User):
     return post_user(user)
+
+
+@app.get("/users/{user_id}/profile")
+def get_user_profile(user_id: int):
+    return handle_get_user_profile(user_id)
 
 
 class Put_User_BaseModel(BaseModel):
