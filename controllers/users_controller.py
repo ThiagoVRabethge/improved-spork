@@ -37,6 +37,18 @@ def post_user(user: User):
         return user
 
 
+def handle_get_user_profile(user_id: int):
+    with Session(engine) as session:
+        statement = select(User).where(User.id == user_id)
+        results = session.exec(statement)
+        db_user = results.one()
+        return {
+            "icon": db_user.icon,
+            "username": db_user.username,
+            "about_me": db_user.about_me,
+        }
+
+
 def handle_put_user(user: Put_User_BaseModel):
     with Session(engine) as session:
         statement = select(User).where(User.id == user.user_id)
@@ -51,4 +63,3 @@ def handle_put_user(user: Put_User_BaseModel):
         session.refresh(db_user)
 
         return db_user
-    
