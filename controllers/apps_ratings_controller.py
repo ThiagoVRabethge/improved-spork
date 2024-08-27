@@ -10,12 +10,13 @@ from typing import List
 class RatingInfo(BaseModel):
     comment: str
     username: str
+    user_id: int
 
 
 def handle_get_app_ratings(app_id: int) -> List[RatingInfo]:
     with Session(engine) as session:
         statement = (
-            select(Apps_Ratings.comment, User.username)
+            select(Apps_Ratings.comment, User.username, Apps_Ratings.user_id)
             .join(User, User.id == Apps_Ratings.user_id, isouter=True)
             .where(Apps_Ratings.app_id == app_id)
         )
@@ -24,7 +25,8 @@ def handle_get_app_ratings(app_id: int) -> List[RatingInfo]:
 
         # Convert results to RatingInfo objects
         rating_infos = [
-            RatingInfo(comment=result[0], username=result[1]) for result in results
+            RatingInfo(comment=result[0], username=result[1], user_id=result[2])
+            for result in results
         ]
 
         return rating_infos
