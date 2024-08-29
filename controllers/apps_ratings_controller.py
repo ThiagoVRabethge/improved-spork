@@ -11,12 +11,18 @@ class RatingInfo(BaseModel):
     comment: str
     username: str
     user_id: int
+    app_rating_id: int
 
 
 def handle_get_app_ratings(app_id: int) -> List[RatingInfo]:
     with Session(engine) as session:
         statement = (
-            select(Apps_Ratings.comment, User.username, Apps_Ratings.user_id)
+            select(
+                Apps_Ratings.comment,
+                User.username,
+                Apps_Ratings.user_id,
+                Apps_Ratings.id,
+            )
             .join(User, User.id == Apps_Ratings.user_id, isouter=True)
             .where(Apps_Ratings.app_id == app_id)
         )
@@ -25,7 +31,12 @@ def handle_get_app_ratings(app_id: int) -> List[RatingInfo]:
 
         # Convert results to RatingInfo objects
         rating_infos = [
-            RatingInfo(comment=result[0], username=result[1], user_id=result[2])
+            RatingInfo(
+                comment=result[0],
+                username=result[1],
+                user_id=result[2],
+                app_rating_id=result[3],
+            )
             for result in results
         ]
 
@@ -38,3 +49,20 @@ def post_apps_ratings(app_ratings: Apps_Ratings):
         session.commit()
         session.refresh(app_ratings)
         return app_ratings
+
+
+def handle_delete_app_rating(app_id: int):
+    with Session(engine) as session:
+        statement = select(Apps_Ratings).where(Apps_Ratings.id == app_id)
+        results = session.exec(statement)
+        app = results.one()
+
+        session.delete(app)
+        session.commit()
+
+        statement = select(Apps_Ratings).where(Apps_Ratings.id == app_id)
+        results = session.exec(statement)
+        app = results.first()
+
+        if app is None:
+            return "successfully deleted"

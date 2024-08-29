@@ -24,6 +24,7 @@ from models.apps_ratings import Apps_Ratings
 from controllers.apps_ratings_controller import (
     post_apps_ratings,
     handle_get_app_ratings,
+    handle_delete_app_rating,
 )
 from pydantic import BaseModel
 
@@ -122,3 +123,8 @@ def get_app_ratings(app_id: int):
 @app.post("/apps_ratings")
 def app_ratings(apps_ratings: Apps_Ratings):
     return post_apps_ratings(apps_ratings)
+
+
+@app.delete("/apps_ratings/{app_rating_id}")
+def delete_app_rating(app_rating_id: int):
+    return handle_delete_app_rating(app_rating_id)
