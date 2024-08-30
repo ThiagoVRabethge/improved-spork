@@ -25,8 +25,10 @@ from controllers.apps_ratings_controller import (
     post_apps_ratings,
     handle_get_app_ratings,
     handle_delete_app_rating,
+    handle_put_app_rating,
 )
 from pydantic import BaseModel
+from base_models.put_app_rating import Put_App_Rating_BaseModel
 
 load_dotenv()
 
@@ -123,6 +125,16 @@ def get_app_ratings(app_id: int):
 @app.post("/apps_ratings")
 def app_ratings(apps_ratings: Apps_Ratings):
     return post_apps_ratings(apps_ratings)
+
+
+# class Put_App_Rating_BaseModel(BaseModel):
+#     app_rating_id: int
+#     new_rating: str
+
+
+@app.put("/apps_ratings")
+def put_app_rating(app_rating: Put_App_Rating_BaseModel):
+    return handle_put_app_rating(app_rating)
 
 
 @app.delete("/apps_ratings/{app_rating_id}")

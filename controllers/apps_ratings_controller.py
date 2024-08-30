@@ -5,6 +5,7 @@ from models.user_model import User
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from typing import List
+from base_models.put_app_rating import Put_App_Rating_BaseModel
 
 
 class RatingInfo(BaseModel):
@@ -49,6 +50,23 @@ def post_apps_ratings(app_ratings: Apps_Ratings):
         session.commit()
         session.refresh(app_ratings)
         return app_ratings
+
+
+def handle_put_app_rating(app_rating: Put_App_Rating_BaseModel):
+    with Session(engine) as session:
+        statement = select(Apps_Ratings).where(
+            Apps_Ratings.id == app_rating.app_rating_id
+        )
+        results = session.exec(statement)
+        db_app = results.one()
+
+        db_app.comment = app_rating.new_rating
+
+        session.add(db_app)
+        session.commit()
+        session.refresh(db_app)
+
+        return db_app
 
 
 def handle_delete_app_rating(app_id: int):
