@@ -6,12 +6,52 @@ from models.apps_model import Apps
 
 from fastapi import FastAPI, HTTPException
 
+from models.user_model import User
 
-def get_apps():
+from pydantic import BaseModel
+
+# from base_models.apps_base_models import Get_All_Apps
+
+from typing import List
+
+# class Get_All_Apps(BaseModel):
+#     app_name: str
+#     app_description: str
+#     username: str
+
+
+class Get_All_Apps(BaseModel):
+    id: int
+    name: str
+    description: str
+    link: str
+    username: str
+
+
+def handle_get_apps() -> List[Get_All_Apps]:
     with Session(engine) as session:
-        statement = select(Apps)
+        statement = select(
+            Apps.user_id,
+            Apps.name,
+            Apps.description,
+            Apps.link,
+            User.username,
+        ).join(User, User.id == Apps.user_id, isouter=True)
+
         results = session.exec(statement)
-        return results.all()
+
+        all_apps = [
+            Get_All_Apps(
+                id=result[0],
+                name=result[1],
+                description=result[2],
+                link=result[3],
+                username=result[4],
+            )
+            for result in results
+        ]
+
+        return all_apps
 
 
 def get_apps_by_user(user_id: int):
