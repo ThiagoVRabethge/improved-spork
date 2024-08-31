@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from database.postgres import create_db_and_tables, engine
 from models.user_model import User
@@ -12,7 +12,7 @@ import os
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.apps_controller import (
-    get_apps,
+    handle_get_apps,
     get_apps_by_user,
     post_app,
     put_app,
@@ -93,8 +93,8 @@ def put_user(user: Put_User_BaseModel):
 
 
 @app.get("/apps")
-def read_all_apps():
-    return get_apps()
+def get_apps():
+    return handle_get_apps()
 
 
 @app.get("/users/{user_id}/apps")
