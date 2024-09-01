@@ -8,7 +8,7 @@ deploy:
 	git commit -m $commit
 	git push origin $branch
 
-.PHONY: pull
-pull:
-	git checkout main
-	git pull
+# .PHONY: pull
+# pull:
+# 	git checkout main
+# 	git pull
