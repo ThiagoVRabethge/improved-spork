@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from database.postgres import create_db_and_tables, engine
 from models.user_model import User
@@ -29,6 +29,8 @@ from controllers.apps_ratings_controller import (
 )
 from pydantic import BaseModel
 from base_models.put_app_rating import Put_App_Rating_BaseModel
+from passlib.hash import pbkdf2_sha256
+from fastapi.responses import JSONResponse
 
 load_dotenv()
 
@@ -62,10 +64,27 @@ def docs():
 # auth routes
 
 
-@timeout_decorator.timeout(1)
+class SignInParams(BaseModel):
+    username: str
+    password: str
+
+
+class SignInResponse(BaseModel):
+    id: int
+    username: str
+
+
 @app.post("/sign_in")
-def sign_in(user: User):
-    return login(user)
+async def sign_in(user: SignInParams) -> SignInResponse:
+    with Session(engine) as session:
+        statement = select(User).where(User.username == user.username)
+        results = session.exec(statement)
+
+        for db_user in results:
+            if not pbkdf2_sha256.verify(user.password, db_user.password):
+                raise HTTPException(status_code=400, detail="Wrong password")
+            else:
+                return JSONResponse({"id": db_user.id, "username": db_user.username})
 
 
 @app.post("/sign_up")
