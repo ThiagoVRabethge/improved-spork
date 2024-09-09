@@ -1,4 +1,5 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
+from fastapi.responses import FileResponse
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 from database.postgres import create_db_and_tables, engine
 from models.user_model import User
@@ -31,6 +32,9 @@ from pydantic import BaseModel
 from base_models.put_app_rating import Put_App_Rating_BaseModel
 from passlib.hash import pbkdf2_sha256
 from fastapi.responses import JSONResponse
+import os
+import shutil
+from fastapi.staticfiles import StaticFiles
 
 load_dotenv()
 
@@ -84,7 +88,14 @@ async def sign_in(user: SignInParams) -> SignInResponse:
             if not pbkdf2_sha256.verify(user.password, db_user.password):
                 raise HTTPException(status_code=400, detail="Wrong password")
             else:
-                return JSONResponse({"id": db_user.id, "username": db_user.username})
+                return JSONResponse(
+                    {
+                        "id": db_user.id,
+                        "username": db_user.username,
+                        "icon": db_user.icon,
+                        "about_me": db_user.about_me,
+                    }
+                )
 
 
 @app.post("/sign_up")
@@ -106,9 +117,6 @@ class Put_User_BaseModel(BaseModel):
 @app.put("/users")
 def put_user(user: Put_User_BaseModel):
     return handle_put_user(user)
-
-
-# apps routes
 
 
 @app.get("/apps")
@@ -146,11 +154,6 @@ def app_ratings(apps_ratings: Apps_Ratings):
     return post_apps_ratings(apps_ratings)
 
 
-# class Put_App_Rating_BaseModel(BaseModel):
-#     app_rating_id: int
-#     new_rating: str
-
-
 @app.put("/apps_ratings")
 def put_app_rating(app_rating: Put_App_Rating_BaseModel):
     return handle_put_app_rating(app_rating)
@@ -159,3 +162,51 @@ def put_app_rating(app_rating: Put_App_Rating_BaseModel):
 @app.delete("/apps_ratings/{app_rating_id}")
 def delete_app_rating(app_rating_id: int):
     return handle_delete_app_rating(app_rating_id)
+
+
+UPLOAD_FOLDER = "uploads"
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+app.mount("/uploads", StaticFiles(directory=str(UPLOAD_FOLDER)), name="uploads")
+
+
+@app.post("/upload/{user_id}/{about_me}")
+async def upload_file(user_id: str, about_me: str, file: UploadFile = File(...)):
+    file_location = os.path.join(UPLOAD_FOLDER, f"{user_id}_{file.filename}")
+
+    with open(file_location, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    with Session(engine) as session:
+        statement = select(User).where(User.id == user_id)
+        results = session.exec(statement)
+        db_user = results.one()
+
+        db_user.icon = f"{user_id}_{file.filename}"
+        db_user.about_me = about_me
+
+        session.add(db_user)
+        session.commit()
+        session.refresh(db_user)
+
+        return JSONResponse(
+            {
+                "id": db_user.id,
+                "username": db_user.username,
+                "icon": db_user.icon,
+                "about_me": db_user.about_me,
+            }
+        )
+
+
+@app.get("/images/{filename}")
+async def get_image(filename: str):
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+
+    # Verificar se o arquivo existe
+    if not os.path.isfile(file_path):
+        raise HTTPException(status_code=404, detail="File not found")
+
+    return FileResponse(file_path)
