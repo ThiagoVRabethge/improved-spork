@@ -15,7 +15,7 @@ class Put_User_BaseModel(BaseModel):
     about_me: str
 
 
-def handle_sign_in(user: SignInUpParams) -> SignInUpResponse:
+async def handle_sign_in(user: SignInUpParams) -> SignInUpResponse:
     with Session(engine) as session:
         statement = select(User).where(User.username == user.username)
 
@@ -35,7 +35,7 @@ def handle_sign_in(user: SignInUpParams) -> SignInUpResponse:
                 )
 
 
-def handle_sign_up(user: SignInUpParams) -> SignInUpResponse:
+async def handle_sign_up(user: SignInUpParams) -> SignInUpResponse:
     if not re.match(r"^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$", user.password):
         raise HTTPException(status_code=400, detail="Password too weak")
 
