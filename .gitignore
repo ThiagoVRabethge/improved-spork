@@ -1,1 +1,7 @@
 /.env
+/models/__pycache__
+/middlewares/__pycache__
+/database/__pycache__
+/controllers/__pycache__
+/base_models/__pycache__
+/__pycache__
