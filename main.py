@@ -37,26 +37,17 @@ import shutil
 from fastapi.staticfiles import StaticFiles
 from typing import Optional
 from base_models.user_base_models import SignInUpParams
-
-load_dotenv()
+from middlewares.add_cors_middleware import add_cors_middleware
 
 app = FastAPI()
 
 
-origins = [os.environ.get("LOCALHOST"), os.environ.get("PRODUCTION_URL")]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+add_cors_middleware(app)
 
 
 @app.get("/")
 def docs():
-    return {"docs": "access /docs", "redoc": "access /redoc"}
+    return {"docs": "access /docs to see", "redoc": "access /redoc to see"}
 
 
 @app.post("/sign_in")
