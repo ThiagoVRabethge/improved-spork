@@ -5,7 +5,7 @@ from database.postgres import create_db_and_tables, engine
 from models.user_model import User
 from controllers.users_controller import (
     handle_sign_in,
-    post_user,
+    handle_sign_up,
     handle_get_user_profile,
     handle_put_user,
 )
@@ -36,7 +36,7 @@ import os
 import shutil
 from fastapi.staticfiles import StaticFiles
 from typing import Optional
-from base_models.user_base_models import SignInParams, SignInResponse
+from base_models.user_base_models import SignInUpParams
 
 load_dotenv()
 
@@ -60,13 +60,13 @@ def docs():
 
 
 @app.post("/sign_in")
-def sign_in(user: SignInParams):
+def sign_in(user: SignInUpParams):
     return handle_sign_in(user)
 
 
 @app.post("/sign_up")
 def sign_up(user: User):
-    return post_user(user)
+    return handle_sign_up(user)
 
 
 @app.get("/users/{user_id}/profile")

@@ -6,7 +6,7 @@ import re
 from passlib.hash import pbkdf2_sha256
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
-from base_models.user_base_models import SignInParams, SignInResponse
+from base_models.user_base_models import SignInUpParams, SignInUpResponse
 
 
 class Put_User_BaseModel(BaseModel):
@@ -15,7 +15,7 @@ class Put_User_BaseModel(BaseModel):
     about_me: str
 
 
-def handle_sign_in(user: SignInParams) -> SignInResponse:
+def handle_sign_in(user: SignInUpParams) -> SignInUpResponse:
     with Session(engine) as session:
         statement = select(User).where(User.username == user.username)
 
@@ -35,7 +35,7 @@ def handle_sign_in(user: SignInParams) -> SignInResponse:
                 )
 
 
-def post_user(user: User):
+def handle_sign_up(user: SignInUpParams) -> SignInUpResponse:
     if not re.match(r"^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$", user.password):
         raise HTTPException(status_code=400, detail="Password too weak")
 
@@ -45,7 +45,14 @@ def post_user(user: User):
         session.add(user)
         session.commit()
         session.refresh(user)
-        return user
+        return JSONResponse(
+            {
+                "id": user.id,
+                "username": user.username,
+                "icon": user.icon,
+                "about_me": user.about_me,
+            }
+        )
 
 
 def handle_get_user_profile(user_id: int):
