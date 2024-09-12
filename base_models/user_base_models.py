@@ -2,12 +2,12 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class SignInParams(BaseModel):
+class SignInUpParams(BaseModel):
     username: str
     password: str
 
 
-class SignInResponse(BaseModel):
+class SignInUpResponse(BaseModel):
     id: int
     username: str
     icon: Optional[str] = None
