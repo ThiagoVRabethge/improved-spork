@@ -5,6 +5,8 @@ from database.postgres import create_db_and_tables, engine
 import re
 from passlib.hash import pbkdf2_sha256
 from pydantic import BaseModel
+from fastapi.responses import JSONResponse
+from base_models.user_base_models import SignInParams, SignInResponse
 
 
 class Put_User_BaseModel(BaseModel):
@@ -13,15 +15,24 @@ class Put_User_BaseModel(BaseModel):
     about_me: str
 
 
-def login(user: User):
+def handle_sign_in(user: SignInParams) -> SignInResponse:
     with Session(engine) as session:
         statement = select(User).where(User.username == user.username)
+
         results = session.exec(statement)
+
         for db_user in results:
             if not pbkdf2_sha256.verify(user.password, db_user.password):
                 raise HTTPException(status_code=400, detail="Wrong password")
             else:
-                return {"id": db_user.id, "username": db_user.username}
+                return JSONResponse(
+                    {
+                        "id": db_user.id,
+                        "username": db_user.username,
+                        "icon": db_user.icon,
+                        "about_me": db_user.about_me,
+                    }
+                )
 
 
 def post_user(user: User):

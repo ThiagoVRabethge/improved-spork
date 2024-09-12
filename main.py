@@ -4,7 +4,7 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 from database.postgres import create_db_and_tables, engine
 from models.user_model import User
 from controllers.users_controller import (
-    login,
+    handle_sign_in,
     post_user,
     handle_get_user_profile,
     handle_put_user,
@@ -35,6 +35,8 @@ from fastapi.responses import JSONResponse
 import os
 import shutil
 from fastapi.staticfiles import StaticFiles
+from typing import Optional
+from base_models.user_base_models import SignInParams, SignInResponse
 
 load_dotenv()
 
@@ -52,50 +54,14 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
-def on_startup():
-    create_db_and_tables()
-
-
-# docs route
-
-
 @app.get("/")
 def docs():
-    return {"docs": "access /docs to see"}
-
-
-# auth routes
-
-
-class SignInParams(BaseModel):
-    username: str
-    password: str
-
-
-class SignInResponse(BaseModel):
-    id: int
-    username: str
+    return {"docs": "access /docs", "redoc": "access /redoc"}
 
 
 @app.post("/sign_in")
-async def sign_in(user: SignInParams) -> SignInResponse:
-    with Session(engine) as session:
-        statement = select(User).where(User.username == user.username)
-        results = session.exec(statement)
-
-        for db_user in results:
-            if not pbkdf2_sha256.verify(user.password, db_user.password):
-                raise HTTPException(status_code=400, detail="Wrong password")
-            else:
-                return JSONResponse(
-                    {
-                        "id": db_user.id,
-                        "username": db_user.username,
-                        "icon": db_user.icon,
-                        "about_me": db_user.about_me,
-                    }
-                )
+def sign_in(user: SignInParams):
+    return handle_sign_in(user)
 
 
 @app.post("/sign_up")
@@ -210,3 +176,9 @@ async def get_image(filename: str):
         raise HTTPException(status_code=404, detail="File not found")
 
     return FileResponse(file_path)
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
