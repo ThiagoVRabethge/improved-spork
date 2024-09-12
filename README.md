@@ -1,34 +1,8 @@
 # Overview
 
-This is the API for the Community Store application, the app store for open source PWAs.
+API of the Community Store, a app store for free and open-source PWAS
 
-Running this project locally creates a Postgres database with users and apps tables, this MVC API provides get and post routes for them, you can also access root endpoint to view all documentation 
-
-# Getting Started
-
-### Requirements:
-
-- Python installed
-
-- A git clone of this repository
-
-### Environment Variables:
-
-Add an .env file to your project root. It should contain the following environment variables:
-
-- PG_URL
-
-- LOCALHOST
-
-- PRODUCTION_URL
-
-For examples, see the .env_example file
-
-### Install the project dependencies:
-
-```py -m pip install -r requirements.txt```
-
-This command will install: 
+### Tech stack:
 
 - FastApi, a web framework for building APIs
 
@@ -36,6 +10,42 @@ This command will install:
 
 - Uvicorn, an ASGI web server implementation for Python
 
-### Running the project:
+# Getting Started
 
-```py -m uvicorn main:app --reload```
+### Clone the project:
+
+```bash
+git clone https://github.com/ThiagoVRabethge/improved-spork
+```
+
+### Add .env file:
+
+```bash
+PG_URL=your_postgres_onrender_string_connection
+
+LOCALHOST=http://localhost:port
+
+PRODUCTION_URL=https://your_deployed_fast_app_url
+```
+
+### Create a virtual enviroment:
+
+```bash
+cd improved-spork
+```
+
+```bash
+py -m venv [name of your environment]
+```
+
+### Install the dependencies:
+
+```bash
+py -m pip install -r requirements.txt
+```
+
+### Run the project locally:
+
+```bash
+py -m uvicorn main:app --reload
+```
