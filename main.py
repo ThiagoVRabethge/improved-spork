@@ -60,13 +60,13 @@ def docs():
 
 
 @app.post("/sign_in")
-def sign_in(user: SignInUpParams):
-    return handle_sign_in(user)
+async def sign_in(user: SignInUpParams):
+    return await handle_sign_in(user)
 
 
 @app.post("/sign_up")
-def sign_up(user: User):
-    return handle_sign_up(user)
+async def sign_up(user: SignInUpParams):
+    return await handle_sign_up(user)
 
 
 @app.get("/users/{user_id}/profile")
