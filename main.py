@@ -38,8 +38,13 @@ from fastapi.staticfiles import StaticFiles
 from typing import Optional
 from base_models.user_base_models import SignInUpParams
 from middlewares.add_cors_middleware import add_cors_middleware
+import uuid
+import os
+from services.firebase import initialize_firebase
 
 app = FastAPI()
+
+bucket = initialize_firebase()
 
 
 add_cors_middleware(app)
@@ -121,52 +126,42 @@ def delete_app_rating(app_rating_id: int):
     return handle_delete_app_rating(app_rating_id)
 
 
-UPLOAD_FOLDER = "uploads"
+@app.post("/users/{user_id}/profile/{about_me}")
+async def upload_image(user_id: int, about_me: str, file: UploadFile = File(...)):
+    try:
+        blob_name = f"{uuid.uuid4()}.{file.filename.split('.')[-1]}"
 
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+        blob = bucket.blob(blob_name)
 
-app.mount("/uploads", StaticFiles(directory=str(UPLOAD_FOLDER)), name="uploads")
+        blob.upload_from_file(file.file, content_type=file.content_type)
 
+        blob.make_public()
 
-@app.post("/upload/{user_id}/{about_me}")
-async def upload_file(user_id: str, about_me: str, file: UploadFile = File(...)):
-    file_location = os.path.join(UPLOAD_FOLDER, f"{user_id}_{file.filename}")
+        url = blob.public_url
 
-    with open(file_location, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+        with Session(engine) as session:
+            statement = select(User).where(User.id == user_id)
+            results = session.exec(statement)
 
-    with Session(engine) as session:
-        statement = select(User).where(User.id == user_id)
-        results = session.exec(statement)
-        db_user = results.one()
+            db_user = results.one()
 
-        db_user.icon = f"{user_id}_{file.filename}"
-        db_user.about_me = about_me
+            db_user.icon = url
+            db_user.about_me = about_me
 
-        session.add(db_user)
-        session.commit()
-        session.refresh(db_user)
+            session.add(db_user)
+            session.commit()
+            session.refresh(db_user)
 
-        return JSONResponse(
-            {
-                "id": db_user.id,
-                "username": db_user.username,
-                "icon": db_user.icon,
-                "about_me": db_user.about_me,
-            }
-        )
-
-
-@app.get("/images/{filename}")
-async def get_image(filename: str):
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
-
-    # Verificar se o arquivo existe
-    if not os.path.isfile(file_path):
-        raise HTTPException(status_code=404, detail="File not found")
-
-    return FileResponse(file_path)
+            return JSONResponse(
+                {
+                    "id": db_user.id,
+                    "username": db_user.username,
+                    "icon": db_user.icon,
+                    "about_me": db_user.about_me,
+                }
+            )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao fazer upload: {str(e)}")
 
 
 if __name__ == "__main__":

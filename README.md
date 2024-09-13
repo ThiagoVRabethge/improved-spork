@@ -26,6 +26,10 @@ PG_URL=your_postgres_onrender_string_connection
 LOCALHOST=http://localhost:port
 
 PRODUCTION_URL=https://your_deployed_fast_app_url
+
+FIREBASE_KEY_JSON=firebase-sdk-example.json
+
+FIREBASE_BUCKET=firebase-bucket-example.appspot.com
 ```
 
 ### Create a virtual enviroment:
