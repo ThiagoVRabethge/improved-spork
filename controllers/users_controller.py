@@ -1,58 +1,20 @@
-from fastapi import FastAPI, HTTPException
-from models.user_model import User
-from sqlmodel import Field, Session, SQLModel, create_engine, select
-from database.postgres import create_db_and_tables, engine
 import re
+
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 from passlib.hash import pbkdf2_sha256
 from pydantic import BaseModel
-from fastapi.responses import JSONResponse
+from sqlmodel import Field, Session, SQLModel, create_engine, select
+
 from base_models.user_base_models import SignInUpParams, SignInUpResponse
+from database.postgres import create_db_and_tables, engine
+from models.user_model import User
 
 
 class Put_User_BaseModel(BaseModel):
     user_id: int
     icon: str
     about_me: str
-
-
-async def handle_sign_in(user: SignInUpParams) -> SignInUpResponse:
-    with Session(engine) as session:
-        statement = select(User).where(User.username == user.username)
-
-        results = session.exec(statement)
-
-        for db_user in results:
-            if not pbkdf2_sha256.verify(user.password, db_user.password):
-                raise HTTPException(status_code=400, detail="Wrong password")
-            else:
-                return JSONResponse(
-                    {
-                        "id": db_user.id,
-                        "username": db_user.username,
-                        "icon": db_user.icon,
-                        "about_me": db_user.about_me,
-                    }
-                )
-
-
-async def handle_sign_up(user: SignInUpParams) -> SignInUpResponse:
-    if not re.match(r"^(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$", user.password):
-        raise HTTPException(status_code=400, detail="Password too weak")
-
-    user.password = pbkdf2_sha256.hash(user.password)
-
-    with Session(engine) as session:
-        session.add(user)
-        session.commit()
-        session.refresh(user)
-        return JSONResponse(
-            {
-                "id": user.id,
-                "username": user.username,
-                "icon": user.icon,
-                "about_me": user.about_me,
-            }
-        )
 
 
 def handle_get_user_profile(user_id: int):
