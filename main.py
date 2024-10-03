@@ -14,7 +14,6 @@ from pydantic import BaseModel
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 from base_models.put_app_rating import Put_App_Rating_BaseModel
-from base_models.user_base_models import SignInUpParams
 from controllers.apps_controller import (
     delete_app,
     get_apps_by_user,
@@ -29,7 +28,7 @@ from controllers.apps_ratings_controller import (
     post_apps_ratings,
 )
 from controllers.auth_controller import handle_login, handle_register
-from controllers.users_controller import handle_get_user_profile, handle_put_user
+from controllers.users_controller import handle_get_user_profile
 from database.postgres import create_db_and_tables, engine
 from middlewares.add_cors_middleware import add_cors_middleware
 from models.apps_model import Apps
@@ -79,17 +78,6 @@ def login(user: User):
 @app.get("/users/{user_id}/profile")
 def get_user_profile(user_id: int):
     return handle_get_user_profile(user_id)
-
-
-class Put_User_BaseModel(BaseModel):
-    user_id: int
-    icon: str
-    about_me: str
-
-
-@app.put("/users")
-def put_user(user: Put_User_BaseModel):
-    return handle_put_user(user)
 
 
 @app.get("/users/{user_id}/apps")
