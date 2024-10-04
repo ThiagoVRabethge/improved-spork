@@ -46,9 +46,9 @@ add_cors_middleware(app)
 # start server
 
 
-@app.on_event("startup")
-def on_startup():
-    create_db_and_tables()
+# @app.on_event("startup")
+# def on_startup():
+#     create_db_and_tables()
 
 
 # root
@@ -167,3 +167,9 @@ def put_app_rating(app_rating: Put_App_Rating_BaseModel):
 @app.delete("/apps_ratings/{app_rating_id}")
 def delete_app_rating(app_rating_id: int):
     return handle_delete_app_rating(app_rating_id)
+
+
+if __name__ = "__main__":
+import uvicorn
+
+uvicorn.run("main.py")
