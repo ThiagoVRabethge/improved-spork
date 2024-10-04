@@ -169,7 +169,7 @@ def delete_app_rating(app_rating_id: int):
     return handle_delete_app_rating(app_rating_id)
 
 
-if __name__ = "__main__":
-import uvicorn
+if __name__ == "__main__":
+    import uvicorn
 
-uvicorn.run("main.py")
+    uvicorn.run("main.py")
